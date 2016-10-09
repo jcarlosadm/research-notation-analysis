@@ -1,6 +1,10 @@
 /bin/
 /target/
 /.settings/
+/output/
 
 .project
 .classpath
+*.properties
+!default.properties
+*.list
