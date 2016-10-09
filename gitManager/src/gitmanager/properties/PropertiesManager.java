@@ -8,7 +8,7 @@ import java.util.Properties;
 
 public class PropertiesManager {
     private static Properties properties;
-    private static String path = "./properties/general.properties";
+    private static String path = "general.properties";
 
     public static String getPropertie(String propertie) {
         try {

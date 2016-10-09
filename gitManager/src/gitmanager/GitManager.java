@@ -2,8 +2,10 @@ package gitmanager;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
@@ -20,8 +22,9 @@ import gitmanager.directoryManager.DirectoryManager;
 import gitmanager.report.GeneralReport;
 
 public class GitManager {
-    
+
     private Iterable<RevCommit> commitList = null;
+    private Map<String, RevCommit> commitMap = new HashMap<>();
     private Repository repository;
     private Git git;
     private Hashtable<String, ArrayList<String>> changeMap;
@@ -52,10 +55,22 @@ public class GitManager {
 
     }
 
+    /**
+     * get commit object
+     * 
+     * @param hashKey
+     *            hash of the commit target
+     * @return the commit object
+     */
+    public RevCommit getCommit(String hashKey) {
+        return this.commitMap.get(hashKey);
+    }
+
     public void setRepository(String path) {
         try {
             FileRepositoryBuilder repositoryBuilder = new FileRepositoryBuilder();
             File localRepo = new File(path + System.getProperty("file.separator") + ".git");
+            
             repositoryBuilder.setGitDir(localRepo);
             repositoryBuilder.readEnvironment();
 
@@ -94,7 +109,7 @@ public class GitManager {
     public void generateChangedFilesMap() {
         if (this.changeMapGenerated == true)
             return;
-        
+
         String commitId = "";
         try {
             RevWalk rw = new RevWalk(repository);
@@ -111,7 +126,7 @@ public class GitManager {
                     List<DiffEntry> diffs = df.scan(parent.getTree(), commit.getTree());
                     ArrayList<String> changedFiles = new ArrayList<String>();
                     for (DiffEntry diff : diffs) {
-                        
+
                         if ((diff.getChangeType().name().equals("MODIFY") || diff.getChangeType().name().equals("ADD"))
                                 && diff.getNewPath().substring(diff.getNewPath().length() - 2).equals(".c")) {
                             changedFiles.add(diff.getNewPath());
@@ -120,16 +135,17 @@ public class GitManager {
                     if (changedFiles.size() > 0) {
                         changeMap.put(commitId, changedFiles);
                         changeMapKeys.add(commitId);
+                        this.commitMap.put(commitId, commit);
                     }
                 } catch (Exception e) {
                     GeneralReport.getInstance()
                             .reportError("Não foi possível acessar as diferenças do commit " + commitId);
                 }
             }
-            
+
             rw.close();
             df.close();
-            
+
         } catch (Exception e) {
             GeneralReport.getInstance()
                     .reportError("Não foi possível acessar as diferenças nos commits do repositório");
