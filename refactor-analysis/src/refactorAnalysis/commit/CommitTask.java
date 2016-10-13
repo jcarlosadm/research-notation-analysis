@@ -1,12 +1,18 @@
 package refactorAnalysis.commit;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import org.apache.commons.io.FileUtils;
+
 import gitmanager.GitManager;
 import gitmanager.properties.PropertiesManager;
 import refactorAnalysis.file.FileTask;
+import refactorAnalysis.folderManager.FolderManager;
+import refactorAnalysis.git.GitExplorer;
 import refactorAnalysis.git.GitProject;
 
 public class CommitTask {
@@ -21,6 +27,10 @@ public class CommitTask {
     }
 
     public void runAllFiles() {
+        if (this.setCommitsFolder() == false) {
+            return;
+        }
+        
         List<String> filepaths = getRelevantFilepaths();
         
         int numberOfThreads = this.getNumberOfThreads();
@@ -36,6 +46,50 @@ public class CommitTask {
 
         if (!threads.isEmpty()) {
             this.runAllThreads(threads);
+        }
+    }
+
+    private boolean setCommitsFolder() {
+        String tempFolder = FolderManager.createTempProjectFolder(this.gitProject.getName());
+        String currentCommitPath = tempFolder + File.separator + "currentCommit";
+        String previousCommitPath = tempFolder + File.separator + "previousCommit";
+        
+        File currentCommitFolder = new File(currentCommitPath);
+        File previousCommitFolder = new File(previousCommitPath);
+        this.deleteFolders(currentCommitFolder);
+        this.deleteFolders(previousCommitFolder);
+        
+        if (!currentCommitFolder.mkdirs() || !previousCommitFolder.mkdirs()) {
+            return false;
+        }
+        
+        this.gitProject.setCurrentCommitFolder(currentCommitPath);
+        this.gitProject.setPreviousCommitFolder(previousCommitPath);
+        
+        GitManager gitManagerCurrentCommit = this.gitProject.getGitManagerCurrentCommit();
+        GitManager gitManagerPreviousCommit = this.gitProject.getGitManagerPreviousCommit();
+        
+        GitExplorer gitExplorer = new GitExplorer(this.gitProject);
+        
+        if (!gitManagerCurrentCommit.checkout(this.commitHash)) {
+            return false;
+        }
+        
+        if (!gitManagerPreviousCommit.checkout(gitExplorer.getPreviousCommit(this.commitHash))) {
+            return false;
+        }
+        
+        return true;
+    }
+
+    private void deleteFolders(File directory) {
+        if (!directory.exists()) {
+            return;
+        }
+        try {
+            FileUtils.deleteDirectory(directory);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

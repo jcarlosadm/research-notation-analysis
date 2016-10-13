@@ -1,0 +1,79 @@
+package refactorAnalysis.git;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.treewalk.TreeWalk;
+
+public class GitExplorer {
+    private GitProject gitProject;
+
+    public GitExplorer(GitProject gitProject) {
+        this.gitProject = gitProject;
+    }
+
+    /**
+     * Get a hash of a previous commit
+     * 
+     * @param commitHash
+     *            hash of current commit
+     * @return hash of a previous commit
+     */
+    public String getPreviousCommit(String commitHash) {
+        RevCommit revCommit = this.gitProject.getGitManager().getCommit(commitHash);
+        return revCommit.getParent(0).getId().getName();
+    }
+
+    /**
+     * Get a list of file paths of a commit
+     * 
+     * @param commitHash
+     *            hash of commit
+     * @param endwithFilter
+     *            a filter, like ".c"
+     * @return List of file paths of this commit
+     * @throws Exception
+     */
+    public List<String> getFilesOfCommit(String commitHash, String endwithFilter) throws Exception {
+        List<String> filepathList = new ArrayList<>();
+
+        RevCommit revCommit = this.gitProject.getGitManager().getCommit(commitHash);
+
+        TreeWalk treeWalk = new TreeWalk(this.gitProject.getGitManager().getRepository());
+        try {
+            treeWalk.addTree(revCommit.getTree());
+            treeWalk.setRecursive(true);
+
+            while (treeWalk.next()) {
+                if (treeWalk.getPathString().endsWith(endwithFilter)) {
+                    filepathList.add(treeWalk.getPathString());
+                }
+            }
+
+            treeWalk.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            treeWalk.close();
+            return null;
+        }
+
+        return filepathList;
+    }
+
+    public String getFilePathOfPreviousCommit(String filepathCurrentCommit, String currentCommit, String endwithFilter)
+            throws Exception {
+        String previousCommit = this.getPreviousCommit(currentCommit);
+        List<String> files = this.getFilesOfCommit(previousCommit, endwithFilter);
+        String filename = filepathCurrentCommit.substring(filepathCurrentCommit.lastIndexOf(File.separator) + 1);
+        for (String file : files) {
+            if (file.contains(filename)) {
+                return file;
+            }
+        }
+
+        return null;
+    }
+}

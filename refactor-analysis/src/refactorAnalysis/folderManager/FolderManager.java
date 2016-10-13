@@ -2,22 +2,35 @@ package refactorAnalysis.folderManager;
 
 import java.io.File;
 
-public class FolderManager {
+public abstract class FolderManager {
 
     private static final String OUTPUT_FOLDER = "output";
     private static final String PROJECTS_FOLDER = "projects";
     private static final String REPORTS_FOLDER = "reports";
     private static final String CACHE_FOLDER = "cache";
+    private static final String TEMP_FOLDER = "temp";
+    
+    private FolderManager() {
+    }
 
     public static void createAllMainFolders() {
         createOutputFolder();
         createProjectsFolder();
         createReportsFolder();
         createCacheFolder();
+        createTempFolder();
     }
 
     public static String createProjectFolder(String projectName) {
-        File projectFolder = new File(OUTPUT_FOLDER + File.separator + PROJECTS_FOLDER + File.separator + projectName);
+        return createSubfolder(PROJECTS_FOLDER, projectName);
+    }
+    
+    public static String createTempProjectFolder(String projectName) {
+        return createSubfolder(TEMP_FOLDER, projectName);
+    }
+    
+    private static String createSubfolder(String firstFolder, String subfolder) {
+        File projectFolder = new File(OUTPUT_FOLDER + File.separator + firstFolder + File.separator + subfolder);
         if (!projectFolder.exists()) {
             projectFolder.mkdirs();
         }
@@ -33,21 +46,24 @@ public class FolderManager {
     }
 
     private static void createProjectsFolder() {
-        File file = new File(OUTPUT_FOLDER + File.separator + PROJECTS_FOLDER);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
+        createFolder(PROJECTS_FOLDER);
     }
 
     private static void createReportsFolder() {
-        File file = new File(OUTPUT_FOLDER + File.separator + REPORTS_FOLDER);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
+        createFolder(REPORTS_FOLDER);
     }
 
     private static void createCacheFolder() {
-        File file = new File(OUTPUT_FOLDER + File.separator + CACHE_FOLDER);
+        createFolder(CACHE_FOLDER);
+    }
+    
+    private static void createTempFolder() {
+        createFolder(TEMP_FOLDER);
+        
+    }
+    
+    private static void createFolder(String folderpath) {
+        File file = new File(OUTPUT_FOLDER + File.separator + folderpath);
         if (!file.exists()) {
             file.mkdirs();
         }
