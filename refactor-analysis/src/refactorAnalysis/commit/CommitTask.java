@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Stack;
 
 import gitmanager.GitManager;
+import gitmanager.properties.PropertiesManager;
 import refactorAnalysis.file.FileTask;
 import refactorAnalysis.git.GitProject;
 
@@ -21,13 +22,15 @@ public class CommitTask {
 
     public void runAllFiles() {
         List<String> filepaths = getRelevantFilepaths();
+        
+        int numberOfThreads = this.getNumberOfThreads();
 
         Stack<Thread> threads = new Stack<>();
         for (String filepath : filepaths) {
 
             threads.push(new Thread(new FileTask(this.gitProject, this.commitHash, filepath)));
             // TODO change the constant!
-            if (threads.size() >= 4) {
+            if (threads.size() >= numberOfThreads) {
                 this.runAllThreads(threads);
             }
         }
@@ -58,6 +61,18 @@ public class CommitTask {
                 e.printStackTrace();
             }
         }
+    }
+    
+    private int getNumberOfThreads(){
+        String numberOfThreadsString = PropertiesManager.getPropertie("threads.maximum");
+        int numberOfThreads;
+        try {
+            numberOfThreads = Integer.parseInt(numberOfThreadsString);
+        } catch (Exception e) {
+            numberOfThreads = 1;
+        }
+        
+        return numberOfThreads;
     }
 
 }
