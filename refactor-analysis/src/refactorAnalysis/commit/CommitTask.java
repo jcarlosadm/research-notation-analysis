@@ -63,6 +63,13 @@ public class CommitTask {
             return false;
         }
         
+        this.copyProjectToFolder(currentCommitFolder);
+        this.copyProjectToFolder(previousCommitFolder);
+        
+        return this.setCommitsFolder(currentCommitPath, previousCommitPath);
+    }
+
+    private boolean setCommitsFolder(String currentCommitPath, String previousCommitPath) {
         this.gitProject.setCurrentCommitFolder(currentCommitPath);
         this.gitProject.setPreviousCommitFolder(previousCommitPath);
         
@@ -88,6 +95,14 @@ public class CommitTask {
         }
         try {
             FileUtils.deleteDirectory(directory);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private void copyProjectToFolder(File destFolder) {
+        try {
+            FileUtils.copyDirectory(new File(this.gitProject.getProjectFolder()), destFolder);
         } catch (IOException e) {
             e.printStackTrace();
         }
