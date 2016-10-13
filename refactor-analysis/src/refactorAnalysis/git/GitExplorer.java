@@ -65,6 +65,18 @@ public class GitExplorer {
         return filepathList;
     }
 
+    /**
+     * get path of file in previous commit
+     * 
+     * @param filepathCurrentCommit
+     *            file path in current commit
+     * @param currentCommit
+     *            current commit
+     * @param endwithFilter
+     *            a filter, like ".c"
+     * @return path of file in previous commit, or null
+     * @throws Exception
+     */
     public String getFilePathOfPreviousCommit(String filepathCurrentCommit, String currentCommit, String endwithFilter)
             throws Exception {
         String previousCommit = this.getPreviousCommit(currentCommit);
