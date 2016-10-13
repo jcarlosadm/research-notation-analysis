@@ -90,6 +90,7 @@ public class GitProject {
      * @param currentCommitFolder path of current commit temporary folder 
      */
     public void setCurrentCommitFolder(String currentCommitFolder) {
+        this.gitManagerCurrentCommit = new GitManager();
         this.gitManagerCurrentCommit.setRepository(currentCommitFolder);
         this.gitManagerCurrentCommit.generateChangedFilesMap();
         this.currentCommitFolder = currentCommitFolder;
@@ -108,6 +109,7 @@ public class GitProject {
      * @param previousCommitFolder path of previous commit temporary folder
      */
     public void setPreviousCommitFolder(String previousCommitFolder) {
+        this.gitManagerPreviousCommit = new GitManager();
         this.gitManagerPreviousCommit.setRepository(previousCommitFolder);
         this.gitManagerPreviousCommit.generateChangedFilesMap();
         this.previousCommitFolder = previousCommitFolder;
