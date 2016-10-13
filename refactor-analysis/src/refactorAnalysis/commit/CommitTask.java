@@ -29,7 +29,6 @@ public class CommitTask {
         for (String filepath : filepaths) {
 
             threads.push(new Thread(new FileTask(this.gitProject, this.commitHash, filepath)));
-            // TODO change the constant!
             if (threads.size() >= numberOfThreads) {
                 this.runAllThreads(threads);
             }
