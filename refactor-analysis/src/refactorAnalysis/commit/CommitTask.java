@@ -76,7 +76,7 @@ public class CommitTask {
         GitManager gitManagerCurrentCommit = this.gitProject.getGitManagerCurrentCommit();
         GitManager gitManagerPreviousCommit = this.gitProject.getGitManagerPreviousCommit();
         
-        GitExplorer gitExplorer = new GitExplorer(this.gitProject);
+        GitExplorer gitExplorer = new GitExplorer(this.gitProject.getGitManager());
         
         if (!gitManagerCurrentCommit.checkout(this.commitHash)) {
             return false;

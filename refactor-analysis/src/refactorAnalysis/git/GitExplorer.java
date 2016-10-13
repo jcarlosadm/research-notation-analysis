@@ -8,11 +8,13 @@ import java.util.List;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.treewalk.TreeWalk;
 
-public class GitExplorer {
-    private GitProject gitProject;
+import gitmanager.GitManager;
 
-    public GitExplorer(GitProject gitProject) {
-        this.gitProject = gitProject;
+public class GitExplorer {
+    private GitManager gitManager;
+
+    public GitExplorer(GitManager gitManager) {
+        this.gitManager = gitManager;
     }
 
     /**
@@ -23,7 +25,7 @@ public class GitExplorer {
      * @return hash of a previous commit
      */
     public String getPreviousCommit(String commitHash) {
-        RevCommit revCommit = this.gitProject.getGitManager().getCommit(commitHash);
+        RevCommit revCommit = this.gitManager.getCommit(commitHash);
         return revCommit.getParent(0).getId().getName();
     }
 
@@ -40,9 +42,9 @@ public class GitExplorer {
     public List<String> getFilesOfCommit(String commitHash, String endwithFilter) throws Exception {
         List<String> filepathList = new ArrayList<>();
 
-        RevCommit revCommit = this.gitProject.getGitManager().getCommit(commitHash);
+        RevCommit revCommit = this.gitManager.getCommit(commitHash);
 
-        TreeWalk treeWalk = new TreeWalk(this.gitProject.getGitManager().getRepository());
+        TreeWalk treeWalk = new TreeWalk(this.gitManager.getRepository());
         try {
             treeWalk.addTree(revCommit.getTree());
             treeWalk.setRecursive(true);
