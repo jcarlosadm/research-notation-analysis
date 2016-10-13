@@ -2,6 +2,7 @@
 /target/
 /.settings/
 /output/
+/srcML/
 
 .project
 .classpath
