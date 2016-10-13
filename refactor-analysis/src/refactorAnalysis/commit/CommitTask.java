@@ -66,10 +66,10 @@ public class CommitTask {
         this.copyProjectToFolder(currentCommitFolder);
         this.copyProjectToFolder(previousCommitFolder);
         
-        return this.setCommitsFolder(currentCommitPath, previousCommitPath);
+        return this.setNewGitManagers(currentCommitPath, previousCommitPath);
     }
 
-    private boolean setCommitsFolder(String currentCommitPath, String previousCommitPath) {
+    private boolean setNewGitManagers(String currentCommitPath, String previousCommitPath) {
         this.gitProject.setCurrentCommitFolder(currentCommitPath);
         this.gitProject.setPreviousCommitFolder(previousCommitPath);
         
