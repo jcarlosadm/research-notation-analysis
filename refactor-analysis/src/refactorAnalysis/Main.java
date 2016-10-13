@@ -5,6 +5,7 @@ import refactorAnalysis.commit.CommitTask;
 import refactorAnalysis.folderManager.FolderManager;
 import refactorAnalysis.git.GitList;
 import refactorAnalysis.git.GitProject;
+import refactorAnalysis.report.Report;
 
 public class Main {
 	public static void main(String[] args) {
@@ -23,12 +24,19 @@ public class Main {
 
 				gitManager.setRepository(gitProject.getProjectFolder());
 				gitManager.generateChangedFilesMap();
+				Report report = Report.getNewReportInstance(gitProject.getName());
 
 				// each relevant commit
 				for (String commitHash : gitManager.getChangeMapKeys()) {
 					// run all files in this commit
 					CommitTask commitTask = new CommitTask(gitProject, commitHash);
 					commitTask.runAllFiles();
+				}
+				
+				try {
+					report.closeReport();
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		}

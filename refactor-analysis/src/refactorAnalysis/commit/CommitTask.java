@@ -14,6 +14,7 @@ import refactorAnalysis.file.FileTask;
 import refactorAnalysis.folderManager.FolderManager;
 import refactorAnalysis.git.GitExplorer;
 import refactorAnalysis.git.GitProject;
+import refactorAnalysis.report.Report;
 
 public class CommitTask {
 
@@ -27,7 +28,16 @@ public class CommitTask {
 	}
 
 	public void runAllFiles() {
-		if (this.setCommitsFolder() == false) {
+		System.out.println("commit: "+this.commitHash);
+		Report report = Report.getCurrentInstance(this.gitProject.getName());
+		try {
+			report.write("Commit: "+this.commitHash);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		if (this.setCommitFolders() == false) {
+			System.out.println("    error to set commit folders");
 			return;
 		}
 
@@ -49,7 +59,7 @@ public class CommitTask {
 		}
 	}
 
-	private boolean setCommitsFolder() {
+	private boolean setCommitFolders() {
 		String tempFolder = FolderManager.createTempProjectFolder(this.gitProject.getName());
 		String currentCommitPath = tempFolder + File.separator + "currentCommit";
 		String previousCommitPath = tempFolder + File.separator + "previousCommit";
@@ -109,7 +119,7 @@ public class CommitTask {
 	}
 
 	private List<String> getRelevantFilepaths() {
-		GitManager gitManager = this.gitProject.getGitManager();
+		GitManager gitManager = this.gitProject.getGitManagerCurrentCommit();
 
 		return gitManager.getChangedFilesMap().get(commitHash);
 	}

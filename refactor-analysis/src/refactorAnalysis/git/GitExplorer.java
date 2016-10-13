@@ -26,6 +26,9 @@ public class GitExplorer {
 	 */
 	public String getPreviousCommit(String commitHash) {
 		RevCommit revCommit = this.gitManager.getCommit(commitHash);
+		if (revCommit.getParentCount() == 0) {
+			return null;
+		}
 		return revCommit.getParent(0).getId().getName();
 	}
 
@@ -43,6 +46,8 @@ public class GitExplorer {
 		List<String> filepathList = new ArrayList<>();
 
 		RevCommit revCommit = this.gitManager.getCommit(commitHash);
+		if (revCommit == null)
+			return null;
 
 		TreeWalk treeWalk = new TreeWalk(this.gitManager.getRepository());
 		try {
@@ -81,6 +86,9 @@ public class GitExplorer {
 			throws Exception {
 		String previousCommit = this.getPreviousCommit(currentCommit);
 		List<String> files = this.getFilesOfCommit(previousCommit, endwithFilter);
+		if (files == null)
+			return null;
+		
 		String filename = filepathCurrentCommit.substring(filepathCurrentCommit.lastIndexOf(File.separator) + 1);
 		for (String file : files) {
 			if (file.contains(filename)) {
@@ -88,6 +96,21 @@ public class GitExplorer {
 			}
 		}
 
+		return null;
+	}
+	
+	public String searchFilePathInCurrentCommit(String filename, String commit, String endwithFilter)
+			throws Exception {
+		List<String> files = this.getFilesOfCommit(commit, endwithFilter);
+		if (files == null)
+			return null;
+		
+		for (String filepath : files) {
+			if (filepath.contains(filename)) {
+				return filepath;
+			}
+		}
+		
 		return null;
 	}
 }

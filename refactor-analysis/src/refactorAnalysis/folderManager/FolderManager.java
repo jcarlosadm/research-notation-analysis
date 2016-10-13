@@ -28,14 +28,18 @@ public abstract class FolderManager {
 	public static String createTempProjectFolder(String projectName) {
 		return createSubfolder(TEMP_FOLDER, projectName);
 	}
+	
+	public static String getReportFolder() {
+		return OUTPUT_FOLDER + File.separator + REPORTS_FOLDER;
+	}
 
 	private static String createSubfolder(String firstFolder, String subfolder) {
-		File projectFolder = new File(OUTPUT_FOLDER + File.separator + firstFolder + File.separator + subfolder);
-		if (!projectFolder.exists()) {
-			projectFolder.mkdirs();
+		File folder = new File(OUTPUT_FOLDER + File.separator + firstFolder + File.separator + subfolder);
+		if (!folder.exists()) {
+			folder.mkdirs();
 		}
 
-		return projectFolder.getAbsolutePath();
+		return folder.getAbsolutePath();
 	}
 
 	private static void createOutputFolder() {

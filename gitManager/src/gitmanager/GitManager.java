@@ -121,6 +121,11 @@ public class GitManager {
             for (RevCommit commit : getCommitList()) {
                 try {
                     commitId = commit.getId().getName();
+                    this.commitMap.put(commitId, commit);
+                    
+                    if (commit.getParentCount() == 0) {
+						continue;
+					}
                     RevCommit parent = rw.parseCommit(commit.getParent(0).getId());
 
                     List<DiffEntry> diffs = df.scan(parent.getTree(), commit.getTree());
@@ -135,7 +140,6 @@ public class GitManager {
                     if (changedFiles.size() > 0) {
                         changeMap.put(commitId, changedFiles);
                         changeMapKeys.add(commitId);
-                        this.commitMap.put(commitId, commit);
                     }
                 } catch (Exception e) {
                     GeneralReport.getInstance()
@@ -164,6 +168,9 @@ public class GitManager {
     }
 
     public boolean checkout(String hash) {
+    	if (hash == null || hash.isEmpty()) {
+			return false;
+		}
         try {
             git.checkout().setName(hash).call();
             return true;
