@@ -175,8 +175,7 @@ public class GitManager {
             git.checkout().setName(hash).call();
             return true;
         } catch (Exception e) {
-            GeneralReport.getInstance().reportError(
-                    "Não foi possível dar o checkout no commit: " + hash + ", resetando para tentar de novo");
+            
         }
         try {
             git.reset().setMode(ResetCommand.ResetType.HARD).call();
