@@ -26,8 +26,12 @@ public class Main {
 				gitManager.generateChangedFilesMap();
 				Report report = Report.getNewReportInstance(gitProject.getName());
 
+				int count = 0;
 				// each relevant commit
 				for (String commitHash : gitManager.getChangeMapKeys()) {
+					++count;
+					System.out.println("["+((100*count)/gitManager.getChangeMapKeys().size())+"%]");
+					
 					// run all files in this commit
 					CommitTask commitTask = new CommitTask(gitProject, commitHash);
 					commitTask.runAllFiles();

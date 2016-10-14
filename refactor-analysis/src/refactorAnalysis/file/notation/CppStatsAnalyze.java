@@ -54,6 +54,7 @@ public class CppStatsAnalyze extends NotationAnalyzer {
 			values[1] = Integer.parseInt(number2);
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.out.println(stringToParse);
 			return null;
 		}
 

@@ -14,7 +14,6 @@ import refactorAnalysis.file.FileTask;
 import refactorAnalysis.folderManager.FolderManager;
 import refactorAnalysis.git.GitExplorer;
 import refactorAnalysis.git.GitProject;
-import refactorAnalysis.report.Report;
 
 public class CommitTask {
 
@@ -29,12 +28,6 @@ public class CommitTask {
 
 	public void runAllFiles() {
 		System.out.println("commit: "+this.commitHash);
-		Report report = Report.getCurrentInstance(this.gitProject.getName());
-		try {
-			report.write("Commit: "+this.commitHash);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		
 		if (this.setCommitFolders() == false) {
 			System.out.println("    error to set commit folders");
