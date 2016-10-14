@@ -41,12 +41,12 @@ public class Report {
 	}
 	
 	public void write(String line) throws Exception {
-		this.bufferedWriter.write(System.lineSeparator()+line);
+		this.bufferedWriter.write(System.lineSeparator()+"<br>"+line);
 	}
 	
 	public void writeLink(String link, String text) throws Exception {
 		String formatedLink = "<a href=\"";
-		formatedLink += link +"\">"+text+"</a>";
+		formatedLink += link +"\" target=\"_blank\">"+text+"</a>";
 		this.write(formatedLink);
 	}
 	

@@ -1,6 +1,7 @@
 package refactorAnalysis.file;
 
 import java.io.File;
+import java.util.List;
 
 import refactorAnalysis.file.function.FunctionAnalyzer;
 import refactorAnalysis.file.notation.CppStatsAnalyze;
@@ -32,16 +33,17 @@ public class FileTask implements Runnable {
 		}
 
 		FunctionAnalyzer functionAnalyzer = new FunctionAnalyzer(this.gitProject.getName(), this.currentCommitHash);
-		File[] functionFilesCurrentCommit = functionAnalyzer.getFunctionFiles(this.fileCurrentCommit, "current");
-		File[] functionFilesPreviousCommit = functionAnalyzer.getFunctionFiles(this.filePreviousCommit, "previous");
+		List<File> functionFilesCurrentCommit = functionAnalyzer.getFunctionFiles(this.fileCurrentCommit, "current");
+		List<File> functionFilesPreviousCommit = functionAnalyzer.getFunctionFiles(this.filePreviousCommit, "previous");
 
 		NotationAnalyzer notationAnalyzer = new CppStatsAnalyze();
 		boolean writeReport = false;
 
 		for (File functionFileCurrentCommit : functionFilesCurrentCommit) {
 			for (File functionFilePreviousCommit : functionFilesPreviousCommit) {
+				
 				if (functionFileCurrentCommit.getName().equals(functionFilePreviousCommit.getName())
-						&& notationAnalyzer.analyze(functionFileCurrentCommit, functionFilePreviousCommit) == true) {
+						&& (notationAnalyzer.analyze(functionFilePreviousCommit, functionFileCurrentCommit) == true)) {
 					this.writeOnReport();
 					writeReport = true;
 					break;
