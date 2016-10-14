@@ -15,7 +15,7 @@ public class FunctionAnalyzer {
 		}
 	}
 	
-	public File[] getFunctionFiles(File file) {
+	public File[] getFunctionFiles(File file, String subfolderPath) {
 		// TODO implement
 		return null;
 	}

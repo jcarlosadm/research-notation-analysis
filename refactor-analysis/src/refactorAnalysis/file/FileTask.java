@@ -32,8 +32,8 @@ public class FileTask implements Runnable {
 		}
 
 		FunctionAnalyzer functionAnalyzer = new FunctionAnalyzer(this.gitProject.getName(), this.currentCommitHash);
-		File[] functionFilesCurrentCommit = functionAnalyzer.getFunctionFiles(this.fileCurrentCommit);
-		File[] functionFilesPreviousCommit = functionAnalyzer.getFunctionFiles(this.filePreviousCommit);
+		File[] functionFilesCurrentCommit = functionAnalyzer.getFunctionFiles(this.fileCurrentCommit, "current");
+		File[] functionFilesPreviousCommit = functionAnalyzer.getFunctionFiles(this.filePreviousCommit, "previous");
 
 		NotationAnalyzer notationAnalyzer = new CppStatsAnalyze();
 		boolean writeReport = false;
@@ -53,9 +53,9 @@ public class FileTask implements Runnable {
 		}
 	}
 
-	private void writeOnReport() {
+	private synchronized void writeOnReport() {
 		Report report = Report.getCurrentInstance(this.gitProject.getName());
-		String link = this.gitProject.getUrl()+"/commit/"+this.currentCommitHash;
+		String link = this.gitProject.getUrl() + "/commit/" + this.currentCommitHash;
 		try {
 			report.writeLink(link, this.filename);
 		} catch (Exception e) {
