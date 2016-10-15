@@ -15,10 +15,12 @@ public class CppStatsAnalyze extends NotationAnalyzer {
 	@Override
 	public boolean analyze(File fileBefore, File fileAfter) {
 		int[] valuesBefore = this.runCppStats(fileBefore);
-		int[] valuesAfter = this.runCppStats(fileAfter);
-		if (valuesBefore == null || valuesAfter == null) {
+		if (valuesBefore == null)
 			return false;
-		}
+		
+		int[] valuesAfter = this.runCppStats(fileAfter);
+		if (valuesAfter == null)
+			return false;
 
 		this.numberOfDisciplinedFile1 = valuesBefore[1];
 		this.numberOfUndisciplinedFile1 = valuesBefore[0];
@@ -46,6 +48,10 @@ public class CppStatsAnalyze extends NotationAnalyzer {
 	}
 
 	private int[] computeValues(String stringToParse) {
+		if (!stringToParse.contains("[\'")) {
+			return null;
+		}
+		
 		int[] values = new int[2];
 		try {
 			String number1 = stringToParse.substring(stringToParse.indexOf("[\'") + 2, stringToParse.indexOf("',"));
