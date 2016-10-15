@@ -50,6 +50,17 @@ public class CommitTask {
 		if (!threads.isEmpty()) {
 			this.runAllThreads(threads);
 		}
+		
+		this.deleteTempFiles();
+	}
+
+	private void deleteTempFiles() {
+		String tempFolder = FolderManager.createTempProjectFolder(this.gitProject.getName());
+		try {
+			FileUtils.deleteDirectory(new File(tempFolder));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private boolean setCommitFolders() {
