@@ -36,12 +36,17 @@ public class FileTask implements Runnable {
 		List<File> functionFilesCurrentCommit = functionAnalyzer.getFunctionFiles(this.fileCurrentCommit, "current");
 		List<File> functionFilesPreviousCommit = functionAnalyzer.getFunctionFiles(this.filePreviousCommit, "previous");
 
+		if (functionFilesCurrentCommit == null || functionFilesPreviousCommit == null
+				|| functionFilesCurrentCommit.isEmpty() || functionFilesPreviousCommit.isEmpty()) {
+			return;
+		}
+
 		NotationAnalyzer notationAnalyzer = new CppStatsAnalyze();
 		boolean writeReport = false;
 
 		for (File functionFileCurrentCommit : functionFilesCurrentCommit) {
 			for (File functionFilePreviousCommit : functionFilesPreviousCommit) {
-				
+
 				if (functionFileCurrentCommit.getName().equals(functionFilePreviousCommit.getName())
 						&& (notationAnalyzer.analyze(functionFilePreviousCommit, functionFileCurrentCommit) == true)) {
 					this.writeOnReport();

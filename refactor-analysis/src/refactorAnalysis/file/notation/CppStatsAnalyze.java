@@ -35,11 +35,19 @@ public class CppStatsAnalyze extends NotationAnalyzer {
 		String dmacrosPath = PropertiesManager.getPropertie("dmacros.path");
 		String filePath = file.getAbsolutePath();
 		String xmlPath = filePath.substring(0, filePath.lastIndexOf(".")) + ".xml";
+		File xmlFile = new File(xmlPath);
 
-		ExecScript runSrc2srcml = new ExecScript();
-		runSrc2srcml.addCommand(src2srcmlPath);
-		runSrc2srcml.addCommand(filePath);
-		runSrc2srcml.execAndRedirectOutput(new File(xmlPath));
+		if (!xmlFile.exists()) {
+			ExecScript runSrc2srcml = new ExecScript();
+			runSrc2srcml.addCommand(src2srcmlPath);
+			runSrc2srcml.addCommand(filePath);
+			runSrc2srcml.execAndRedirectOutput(xmlFile);
+		}
+		
+		if (!xmlFile.exists()) {
+			System.out.println("error to create xml file");
+			return null;
+		}
 
 		ExecScript runDmacros = new ExecScript();
 		runDmacros.addCommand(dmacrosPath);

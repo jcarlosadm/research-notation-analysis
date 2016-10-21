@@ -53,13 +53,19 @@ public class FunctionAnalyzer {
 		String xmlPath = filePath.substring(0, filePath.lastIndexOf(".")) + ".xml";
 		File xml = new File(xmlPath);
 
-		ProcessBuilder pBuilder = new ProcessBuilder(PropertiesManager.getPropertie("src2srcml.path"), filePath);
-		pBuilder.redirectOutput(xml);
-		pBuilder.redirectErrorStream(true);
-
 		try {
-			Process process = pBuilder.start();
-			process.waitFor();
+			if (!xml.exists()) {
+				ProcessBuilder pBuilder = new ProcessBuilder(PropertiesManager.getPropertie("src2srcml.path"), filePath);
+				pBuilder.redirectOutput(xml);
+				pBuilder.redirectErrorStream(true);
+				
+				Process process = pBuilder.start();
+				process.waitFor();
+			}
+			
+			if (!xml.exists()) {
+				return null;
+			}
 
 			BufferedReader bReader = new BufferedReader(new FileReader(xml));
 			String line;
