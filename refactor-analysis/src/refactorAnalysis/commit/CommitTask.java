@@ -27,10 +27,8 @@ public class CommitTask {
 	}
 
 	public void runAllFiles() {
-		System.out.println("commit: "+this.commitHash);
-		
 		if (this.setCommitFolders() == false) {
-			System.out.println("    error to set commit folders");
+			System.out.println("    error to set commit folders for "+this.commitHash);
 			return;
 		}
 
