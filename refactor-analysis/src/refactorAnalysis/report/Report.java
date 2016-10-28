@@ -51,12 +51,11 @@ public class Report {
 		this.write(formatedLink);
 		
 		EmailManager emailManager = EmailManager.getInstance();
-		emailManager.appendMessage(formatedLink);
+		emailManager.appendMessage(formatedLink + "<br>");
 		emailManager.sendMessage();
 	}
 	
 	public void closeReport() throws Exception {
 		this.bufferedWriter.close();
 	}
-	
 }
