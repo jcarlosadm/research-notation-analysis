@@ -47,7 +47,7 @@ public class GitProject {
 	 */
 	public void setUrl(String url) {
 		this.url = url;
-		this.name = this.url.substring(this.url.lastIndexOf("/"));
+		this.name = this.url.substring(this.url.lastIndexOf("/") + 1);
 	}
 
 	/**
