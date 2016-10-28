@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 
 import refactorAnalysis.folderManager.FolderManager;
+import refactorAnalysis.report.email.EmailManager;
 
 public class Report {
 
@@ -48,6 +49,10 @@ public class Report {
 		String formatedLink = "<a href=\"";
 		formatedLink += link +"\" target=\"_blank\">"+text+"</a>";
 		this.write(formatedLink);
+		
+		EmailManager emailManager = EmailManager.getInstance();
+		emailManager.appendMessage(formatedLink);
+		emailManager.sendMessage();
 	}
 	
 	public void closeReport() throws Exception {

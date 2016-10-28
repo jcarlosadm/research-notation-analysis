@@ -20,7 +20,7 @@ public class GitList {
 		BufferedReader bReader = null;
 
 		try {
-			String gitListFilePath = PropertiesManager.getPropertie("git.list");
+			String gitListFilePath = PropertiesManager.getProperty("git.list");
 			File gitListFile = new File(gitListFilePath);
 			bReader = new BufferedReader(new FileReader(gitListFile));
 

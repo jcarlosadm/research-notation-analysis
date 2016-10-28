@@ -31,8 +31,8 @@ public class CppStatsAnalyze extends NotationAnalyzer {
 	}
 
 	private int[] runCppStats(File file) {
-		String src2srcmlPath = PropertiesManager.getPropertie("src2srcml.path");
-		String dmacrosPath = PropertiesManager.getPropertie("dmacros.path");
+		String src2srcmlPath = PropertiesManager.getProperty("src2srcml.path");
+		String dmacrosPath = PropertiesManager.getProperty("dmacros.path");
 		String filePath = file.getAbsolutePath();
 		String xmlPath = filePath.substring(0, filePath.lastIndexOf(".")) + ".xml";
 		File xmlFile = new File(xmlPath);

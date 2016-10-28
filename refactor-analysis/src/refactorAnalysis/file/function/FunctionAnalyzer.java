@@ -55,7 +55,7 @@ public class FunctionAnalyzer {
 
 		try {
 			if (!xml.exists()) {
-				ProcessBuilder pBuilder = new ProcessBuilder(PropertiesManager.getPropertie("src2srcml.path"), filePath);
+				ProcessBuilder pBuilder = new ProcessBuilder(PropertiesManager.getProperty("src2srcml.path"), filePath);
 				pBuilder.redirectOutput(xml);
 				pBuilder.redirectErrorStream(true);
 				
@@ -118,7 +118,7 @@ public class FunctionAnalyzer {
 		if (bWriter != null)
 			bWriter.close();
 
-		ProcessBuilder pBuilder = new ProcessBuilder(PropertiesManager.getPropertie("srcml2src.path"),
+		ProcessBuilder pBuilder = new ProcessBuilder(PropertiesManager.getProperty("srcml2src.path"),
 				xmlFunction.getAbsolutePath());
 		File resultFile = this.buildFileFunction(functionName, subfolderPath);
 		pBuilder.redirectOutput(resultFile);

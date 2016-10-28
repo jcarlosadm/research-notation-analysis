@@ -144,7 +144,7 @@ public class CommitTask {
 	}
 
 	private int getNumberOfThreads() {
-		String numberOfThreadsString = PropertiesManager.getPropertie("threads.maximum");
+		String numberOfThreadsString = PropertiesManager.getProperty("threads.maximum");
 		int numberOfThreads;
 		try {
 			numberOfThreads = Integer.parseInt(numberOfThreadsString);
