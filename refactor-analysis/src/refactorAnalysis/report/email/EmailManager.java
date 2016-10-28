@@ -30,12 +30,11 @@ public class EmailManager {
 		props.put("mail.smtp.port", "465");
 	}
 
-	public static EmailManager getNewInstance() {
-		instance = new EmailManager();
-		return instance;
-	}
-
-	public static EmailManager getCurrentInstance() {
+	public static EmailManager getInstance() {
+		if (instance == null) {
+			instance = new EmailManager();
+		}
+		
 		return instance;
 	}
 
