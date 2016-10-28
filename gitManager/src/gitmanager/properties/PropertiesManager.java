@@ -10,7 +10,7 @@ public class PropertiesManager {
     private static Properties properties;
     private static String path = "general.properties";
 
-    public static String getPropertie(String propertie) {
+    public static String getProperty(String propertie) {
         try {
             if (properties == null) {
                 properties = new Properties();
@@ -31,7 +31,7 @@ public class PropertiesManager {
 
     public static void main(String args[]) throws IOException {
         System.out.println("************Teste de leitura do arquivo de propriedades************");
-        System.out.println("path = " + PropertiesManager.getPropertie("path"));
-        System.out.println("path = " + PropertiesManager.getPropertie("path.src2xml"));
+        System.out.println("path = " + PropertiesManager.getProperty("path"));
+        System.out.println("path = " + PropertiesManager.getProperty("path.src2xml"));
     }
 }

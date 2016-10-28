@@ -14,7 +14,7 @@ public class RepoManager {
     private RepoManager() {
         repoList = new ArrayList<String>();
         try {
-            File file = new File(PropertiesManager.getPropertie("path.repolist"));
+            File file = new File(PropertiesManager.getProperty("path.repolist"));
 
             BufferedReader br = new BufferedReader(new FileReader(file));
             for(String line; (line = br.readLine()) != null; ) {

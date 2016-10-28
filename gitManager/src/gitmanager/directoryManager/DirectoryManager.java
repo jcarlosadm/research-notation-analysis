@@ -21,7 +21,7 @@ import gitmanager.report.GeneralReport;
 
 public class DirectoryManager {
     private static DirectoryManager instance;
-    private static String PATH = PropertiesManager.getPropertie("path");
+    private static String PATH = PropertiesManager.getProperty("path");
     public static String WORKERS_PATH = PATH + System.getProperty("file.separator") + "workers";
     public static String BACKUP_PATH = PATH + System.getProperty("file.separator") + "backup";
     public static String RESULT_PATH = PATH + System.getProperty("file.separator") + "results";
