@@ -19,16 +19,21 @@ public class FileTask implements Runnable {
 	private GitProject gitProject;
 	private String filename;
 
-	public FileTask(GitProject gitProject, String commitHash, String filePath) {
+	private ThreadCount threadCount;
+
+	public FileTask(GitProject gitProject, String commitHash, String filePath, ThreadCount threadCount) {
 		this.fileCurrentCommit = new File(gitProject.getCurrentCommitFolder() + File.separator + filePath);
 		this.filename = this.fileCurrentCommit.getName();
 		this.currentCommitHash = commitHash;
 		this.gitProject = gitProject;
+		
+		this.threadCount = threadCount;
 	}
 
 	@Override
 	public void run() {
 		if (this.setPreviousCommitInfo() == false) {
+			this.changeNumberOfThreads();
 			return;
 		}
 
@@ -38,6 +43,7 @@ public class FileTask implements Runnable {
 
 		if (functionFilesCurrentCommit == null || functionFilesPreviousCommit == null
 				|| functionFilesCurrentCommit.isEmpty() || functionFilesPreviousCommit.isEmpty()) {
+			this.changeNumberOfThreads();
 			return;
 		}
 
@@ -58,6 +64,13 @@ public class FileTask implements Runnable {
 				break;
 			}
 		}
+		
+		this.changeNumberOfThreads();
+	}
+
+	private synchronized void changeNumberOfThreads() {
+		this.threadCount.decrement();
+		this.threadCount.unblock();
 	}
 
 	private synchronized void writeOnReport() {

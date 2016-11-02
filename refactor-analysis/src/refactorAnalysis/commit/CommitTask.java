@@ -2,15 +2,14 @@ package refactorAnalysis.commit;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 import org.apache.commons.io.FileUtils;
 
 import gitmanager.GitManager;
 import gitmanager.properties.PropertiesManager;
 import refactorAnalysis.file.FileTask;
+import refactorAnalysis.file.ThreadCount;
 import refactorAnalysis.folderManager.FolderManager;
 import refactorAnalysis.git.GitExplorer;
 import refactorAnalysis.git.GitProject;
@@ -28,27 +27,42 @@ public class CommitTask {
 
 	public void runAllFiles() {
 		if (this.setCommitFolders() == false) {
-			System.out.println("    error to set commit folders for "+this.commitHash);
+			System.out.println("    error to set commit folders for " + this.commitHash);
 			return;
 		}
 
 		List<String> filepaths = getRelevantFilepaths();
 
-		int numberOfThreads = this.getNumberOfThreads();
+		ThreadCount threadCount = new ThreadCount(0, false);
+		int maxOfThreads = this.getNumberOfThreads();
 
-		Stack<Thread> threads = new Stack<>();
 		for (String filepath : filepaths) {
+			Thread thread = new Thread(new FileTask(this.gitProject, this.commitHash, filepath, threadCount));
+			threadCount.increment();
 
-			threads.push(new Thread(new FileTask(this.gitProject, this.commitHash, filepath)));
-			if (threads.size() >= numberOfThreads) {
-				this.runAllThreads(threads);
+			if (threadCount.getNumberOfThreadsRunning() >= maxOfThreads) {
+				threadCount.block();
+				thread.start();
+				while (threadCount.isBlocked()) {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			} else {
+				thread.start();
 			}
 		}
 
-		if (!threads.isEmpty()) {
-			this.runAllThreads(threads);
+		while (threadCount.getNumberOfThreadsRunning() > 0) {
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
-		
+
 		this.deleteTempFiles();
 	}
 
@@ -124,23 +138,6 @@ public class CommitTask {
 		GitManager gitManager = this.gitProject.getGitManagerCurrentCommit();
 
 		return gitManager.getChangedFilesMap().get(commitHash);
-	}
-
-	private void runAllThreads(Stack<Thread> threads) {
-		List<Thread> threadList = new ArrayList<>();
-
-		while (!threads.isEmpty()) {
-			threadList.add(threads.peek());
-			threads.pop().start();
-		}
-
-		for (Thread thread : threadList) {
-			try {
-				thread.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	private int getNumberOfThreads() {
