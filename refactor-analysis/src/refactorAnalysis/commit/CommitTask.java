@@ -16,6 +16,8 @@ import refactorAnalysis.git.GitProject;
 
 public class CommitTask {
 
+	private static final int SLEEP_SECONDS = 1;
+
 	private GitProject gitProject = null;
 
 	private String commitHash = "";
@@ -45,7 +47,7 @@ public class CommitTask {
 				thread.start();
 				while (threadCount.isBlocked()) {
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(SLEEP_SECONDS*1000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -57,7 +59,7 @@ public class CommitTask {
 
 		while (threadCount.getNumberOfThreadsRunning() > 0) {
 			try {
-				Thread.sleep(5000);
+				Thread.sleep(SLEEP_SECONDS*1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
