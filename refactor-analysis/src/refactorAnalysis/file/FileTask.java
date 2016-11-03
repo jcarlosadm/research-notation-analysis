@@ -32,37 +32,40 @@ public class FileTask implements Runnable {
 
 	@Override
 	public void run() {
-		if (this.setPreviousCommitInfo() == false) {
-			this.changeNumberOfThreads();
-			return;
-		}
+		try {
+			if (this.setPreviousCommitInfo() == false) {
+				this.changeNumberOfThreads();
+				return;
+			}
 
-		FunctionAnalyzer functionAnalyzer = new FunctionAnalyzer(this.gitProject.getName(), this.currentCommitHash);
-		List<File> functionFilesCurrentCommit = functionAnalyzer.getFunctionFiles(this.fileCurrentCommit, "current");
-		List<File> functionFilesPreviousCommit = functionAnalyzer.getFunctionFiles(this.filePreviousCommit, "previous");
+			FunctionAnalyzer functionAnalyzer = new FunctionAnalyzer(this.gitProject.getName(), this.currentCommitHash);
+			List<File> functionFilesCurrentCommit = functionAnalyzer.getFunctionFiles(this.fileCurrentCommit, "current");
+			List<File> functionFilesPreviousCommit = functionAnalyzer.getFunctionFiles(this.filePreviousCommit, "previous");
 
-		if (functionFilesCurrentCommit == null || functionFilesPreviousCommit == null
-				|| functionFilesCurrentCommit.isEmpty() || functionFilesPreviousCommit.isEmpty()) {
-			this.changeNumberOfThreads();
-			return;
-		}
+			if (functionFilesCurrentCommit == null || functionFilesPreviousCommit == null
+					|| functionFilesCurrentCommit.isEmpty() || functionFilesPreviousCommit.isEmpty()) {
+				this.changeNumberOfThreads();
+				return;
+			}
 
-		NotationAnalyzer notationAnalyzer = new CppStatsAnalyze();
-		boolean writeReport = false;
+			NotationAnalyzer notationAnalyzer = new CppStatsAnalyze();
+			boolean writeReport = false;
 
-		for (File functionFileCurrentCommit : functionFilesCurrentCommit) {
-			for (File functionFilePreviousCommit : functionFilesPreviousCommit) {
+			for (File functionFileCurrentCommit : functionFilesCurrentCommit) {
+				for (File functionFilePreviousCommit : functionFilesPreviousCommit) {
 
-				if (functionFileCurrentCommit.getName().equals(functionFilePreviousCommit.getName())
-						&& (notationAnalyzer.analyze(functionFilePreviousCommit, functionFileCurrentCommit) == true)) {
-					this.writeOnReport();
-					writeReport = true;
+					if (functionFileCurrentCommit.getName().equals(functionFilePreviousCommit.getName())
+							&& (notationAnalyzer.analyze(functionFilePreviousCommit, functionFileCurrentCommit) == true)) {
+						this.writeOnReport();
+						writeReport = true;
+						break;
+					}
+				}
+				if (writeReport == true) {
 					break;
 				}
 			}
-			if (writeReport == true) {
-				break;
-			}
+		} catch (Exception e) {
 		}
 		
 		this.changeNumberOfThreads();
