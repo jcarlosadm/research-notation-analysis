@@ -2,6 +2,7 @@ package refactorAnalysis.commit;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -9,14 +10,11 @@ import org.apache.commons.io.FileUtils;
 import gitmanager.GitManager;
 import gitmanager.properties.PropertiesManager;
 import refactorAnalysis.file.FileTask;
-import refactorAnalysis.file.ThreadCount;
 import refactorAnalysis.folderManager.FolderManager;
 import refactorAnalysis.git.GitExplorer;
 import refactorAnalysis.git.GitProject;
 
 public class CommitTask {
-
-	private static final int SLEEP_SECONDS = 1;
 
 	private GitProject gitProject = null;
 
@@ -35,37 +33,37 @@ public class CommitTask {
 
 		List<String> filepaths = getRelevantFilepaths();
 
-		ThreadCount threadCount = new ThreadCount(0, false);
 		int maxOfThreads = this.getNumberOfThreads();
+		List<Thread> threads = new ArrayList<>();
 
 		for (String filepath : filepaths) {
-			Thread thread = new Thread(new FileTask(this.gitProject, this.commitHash, filepath, threadCount));
-			threadCount.increment();
-
-			if (threadCount.getNumberOfThreadsRunning() >= maxOfThreads) {
-				threadCount.block();
-				thread.start();
-				while (threadCount.isBlocked()) {
-					try {
-						Thread.sleep(SLEEP_SECONDS*1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			} else {
-				thread.start();
+			threads.add(new Thread(new FileTask(this.gitProject, this.commitHash, filepath)));
+			if (threads.size() >= maxOfThreads) {
+				this.executeAllThreads(threads);
 			}
 		}
 
-		while (threadCount.getNumberOfThreadsRunning() > 0) {
+		if (threads.size() > 0) {
+			this.executeAllThreads(threads);
+		}
+
+		this.deleteTempFiles();
+	}
+
+	private void executeAllThreads(List<Thread> threads) {
+		for (Thread thread : threads) {
+			thread.start();
+		}
+
+		for (Thread thread : threads) {
 			try {
-				Thread.sleep(SLEEP_SECONDS*1000);
-			} catch (InterruptedException e) {
+				thread.join();
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 
-		this.deleteTempFiles();
+		threads.clear();
 	}
 
 	private void deleteTempFiles() {
